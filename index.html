@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>VoiceRecorderFox</title>
+  <style>
+    
+    #result{
+      height: 200px;
+      border: 1px solid #000;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 25px;
+    }
+    #btn__record{
+      font-size: 22px;
+    }
+    #hide__block-two{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="result"></div>
+  <button onclick="startConverting()" id="btn__record">Click to start recording!</button>
+  <div id="hide__block-two"><p>Приветствую вас дмитрий!</p></div>
+  <script type="text/javascript">
+    var r = document.getElementById('result');
+
+    function startConverting(){
+      if('webkitSpeechRecognition' in window){
+        var speechRecognizer = new webkitSpeechRecognition();
+        speechRecognizer.continuous = true;
+        speechRecognizer.interimResults = true;
+        speechRecognizer.lang = 'ru-RU';
+        speechRecognizer.start();
+
+        var finalTranscripts = '';
+
+        speechRecognizer.onresult = function(event){
+          var interimTranscripts = '';
+          for(var i = event.resultIndex; i < event.results.length; i++){
+            var transcript = event.results[i][0].transcript;
+            transcript.replace("\n", "<br>");
+            if(event.results[i].isFinal){
+              finalTranscripts += transcript;
+            }else{
+              interimTranscripts += transcript;
+            }
+          }
+          if(interimTranscripts == 'показать текст 2'){
+            document.getElementById('hide__block-two').style.display = 'block';
+          }
+          if(interimTranscripts == 'скрыть текст 2'){
+            document.getElementById('hide__block-two').style.display = 'none';
+          }
+          if(interimTranscripts == 'открыть Google'){
+            document.location.href = "http://www.google.com";
+          }
+          r.innerHTML = finalTranscripts + '<span style="color: #000;>' + interimTranscripts + '</span>';
+        }
+
+        speechRecognizer.onerror = function(event){
+
+        }
+
+      }else{
+        r.innerHTML = 'Your browser is not supported. If google chrome. Please upgrade!';
+      }
+    }
+
+  </script>
+</body>
+</html>
